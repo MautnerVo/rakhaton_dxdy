@@ -10,7 +10,7 @@ function App() {
     const [ambcelkemnavstevy, setAmbcelkemnavstevy] = useState<string | number>('');
     const [ambonknavstevy, setAmbonknavstevy] = useState<string | number>('');
     const [ambchirnavstevy, setAmbchirnavstevy] = useState<string | number>('');
-    const [vekovakategorie, setVekovakategorie] = useState<string | undefined>('10');
+    const [vekovakategorie, setVekovakategorie] = useState<string | undefined>('');
     const [pldelka, setPldelka] = useState<string | number>('');
     const [ambintnavstevy, setAmbintnavstevy] = useState<string | number>('');
     const [plpocetleceb, setPlpocetleceb] = useState<string | number>('');
@@ -22,6 +22,10 @@ function App() {
 
 
     const [recurrenceData, setRecurrenceData] = useState([]);
+
+    const handleAgeChange = (value: number) => {
+        setVekovakategorie(value - (value % 10) / 10);
+    }
 
     const handleSubmit = async () => {
         const data = {
@@ -82,92 +86,85 @@ function App() {
                                 {error && <Alert variant="light" color="red" title="Error" icon={<IconInfoCircle />}>
                                     { error }
                                 </Alert>}
-                                <Group justify="space-between">
-                                    <Group>
-                                        <Input.Label>amb gyn navstevy</Input.Label>
-                                        <NumberInput
-                                            value={ambgynnavstevy}
-                                            onChange={setAmbgynnavstevy}
-                                        />
-                                    </Group>
-                                    <Group>
-                                        <Input.Label>amb celkem navstevy</Input.Label>
-                                        <NumberInput
-                                            value={ambcelkemnavstevy}
-                                            onChange={setAmbcelkemnavstevy}
-                                        />
-                                    </Group>
-                                    <Group>
-                                        <Input.Label>amb onk navstevy</Input.Label>
-                                        <NumberInput
-                                            value={ambonknavstevy}
-                                            onChange={setAmbonknavstevy}
-                                        />
-                                    </Group>
-                                    <Group>
-                                        <Input.Label>amb chir navstevy</Input.Label>
-                                        <NumberInput
-                                            value={ambchirnavstevy}
-                                            onChange={setAmbchirnavstevy}
-                                        />
-                                    </Group>
-                                    <Group>
-                                        <Input.Label>vekova kategorie</Input.Label>
-                                        <SegmentedControl
-                                            value={vekovakategorie}
-                                            data={[
-                                                {value: '2', label: '20-29'},
-                                                {value: '3', label: '30-39'},
-                                                {value: '4', label: '40-49'},
-                                                {value: '5', label: '50-59'},
-                                                {value: '6', label: '60-69'},
-                                                {value: '7', label: '70-79'},
-                                                {value: '8', label: '80-89'},
-                                                {value: '9', label: '90-99'}
-                                            ]}
-                                            onChange={setVekovakategorie}
-                                        />
-                                    </Group>
-                                    <Group>
-                                        <Input.Label>pl delka</Input.Label>
-                                        <NumberInput
-                                            value={pldelka}
-                                            onChange={setPldelka}
-                                        />
-                                    </Group>
-                                    <Group>
-                                        <Input.Label>amb int navstevy</Input.Label>
-                                        <NumberInput
-                                            value={ambintnavstevy}
-                                            onChange={setAmbintnavstevy}
-                                        />
-                                    </Group>
-                                    <Group>
-                                        <Input.Label>pl pocet leceb</Input.Label>
-                                        <NumberInput
-                                            value={plpocetleceb}
-                                            onChange={setPlpocetleceb}
-                                        />
-                                    </Group>
-                                    <Group>
-                                        <Input.Label>je disp prakt</Input.Label>
-                                        <SegmentedControl
-                                            value={jedispprakt}
-                                            data={[
-                                                {value: '0', label: 'ne'},
-                                                {value: '1', label: 'ano'},
-                                            ]}
-                                            onChange={setJedispprakt}
-                                        />
-                                    </Group>
-                                    <Group>
-                                        <Input.Label>pl pocet leceb c</Input.Label>
-                                        <NumberInput
-                                            value={plpocetlecebC}
-                                            onChange={setPlpocetlecebC}
-                                        />
-                                    </Group>
-
+                                <Group>
+                                    <Stack justify="space-between">
+                                        <Group justify="space-between">
+                                            <Input.Label>amb gyn navstevy</Input.Label>
+                                            <NumberInput
+                                                value={ambgynnavstevy}
+                                                onChange={setAmbgynnavstevy}
+                                            />
+                                        </Group>
+                                        <Group justify="space-between">
+                                            <Input.Label>amb celkem navstevy</Input.Label>
+                                            <NumberInput
+                                                value={ambcelkemnavstevy}
+                                                onChange={setAmbcelkemnavstevy}
+                                            />
+                                        </Group>
+                                        <Group justify="space-between">
+                                            <Input.Label>amb onk navstevy</Input.Label>
+                                            <NumberInput
+                                                value={ambonknavstevy}
+                                                onChange={setAmbonknavstevy}
+                                            />
+                                        </Group>
+                                        <Group justify="space-between">
+                                            <Input.Label>amb chir navstevy</Input.Label>
+                                            <NumberInput
+                                                value={ambchirnavstevy}
+                                                onChange={setAmbchirnavstevy}
+                                            />
+                                        </Group>
+                                        <Group justify="space-between">
+                                            <Input.Label>vek</Input.Label>
+                                            <NumberInput
+                                                value={vekovakategorie}
+                                                onChange={handleAgeChange}
+                                            />
+                                        </Group>
+                                    </Stack>
+                                    <Stack justify="space-between">
+                                        <Group justify="space-between">
+                                            <Input.Label>pl delka</Input.Label>
+                                            <NumberInput
+                                                value={pldelka}
+                                                onChange={setPldelka}
+                                            />
+                                        </Group>
+                                        <Group justify="space-between">
+                                            <Input.Label>amb int navstevy</Input.Label>
+                                            <NumberInput
+                                                value={ambintnavstevy}
+                                                onChange={setAmbintnavstevy}
+                                            />
+                                        </Group>
+                                        <Group justify="space-between">
+                                            <Input.Label>pl pocet leceb</Input.Label>
+                                            <NumberInput
+                                                value={plpocetleceb}
+                                                onChange={setPlpocetleceb}
+                                            />
+                                        </Group>
+                                        <Group justify="space-between">
+                                            <Input.Label>je disp prakt</Input.Label>
+                                            <SegmentedControl
+                                                value={jedispprakt}
+                                                data={[
+                                                    {value: '0', label: 'ne'},
+                                                    {value: '1', label: 'ano'},
+                                                ]}
+                                                onChange={setJedispprakt}
+                                            />
+                                        </Group>
+                                        <Group justify="space-between">
+                                            <Input.Label>pl pocet leceb c</Input.Label>
+                                            <NumberInput
+                                                value={plpocetlecebC}
+                                                onChange={setPlpocetlecebC}
+                                            />
+                                        </Group>
+                                    </Stack>
                                 </Group>
                                 <Group justify="center">
                                     <Button onClick={handleSubmit}>Vyhodnotit</Button>
