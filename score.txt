@@ -1,0 +1,2 @@
+0.7417913173659053 - rsf_top_10_bayes.pkl / data_top_10.csv
+0.7904238989522714 - rsf_model_top!.pkl / data_final_rec(1).csv
