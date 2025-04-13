@@ -1,7 +1,8 @@
 import { NumberInput, SegmentedControl, Alert, LoadingOverlay, Loader, Box, Group, Button, Stack, Title, Card, Input } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
-import { BarChart, Bar, CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
+import { BarChart, Bar, CartesianGrid, Line, LineChart, XAxis, YAxis, Legend, Label} from 'recharts';
+
 
 function App() {
     const [pldelka, setPldelka] = useState<string | number>('');
@@ -188,35 +189,60 @@ function App() {
                             </Stack>
                         </Box>
                         <Stack>
+                        <h2 style={{ textAlign: 'center', marginTop: '20px' }}>Pravděpodobnost sekundární lečby po remisi v čase</h2>
+
                         <Group>
-    <LineChart width={700} height={350} data={recurrenceData}>
-        <XAxis 
-            dataKey="name"
-            ticks={
-                Array.from({ length: Math.floor(recurrenceData.length / 365) + 1 }, (_, i) => i * 365)
-            }
-            tickFormatter={(value) => `${value / 365}`}
-        />
-        <YAxis domain={[0, 1]} />
-        <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-        <Line type="monotone" dataKey="y" stroke="red" dot={false} />
-    </LineChart>
+
+    <g transform="translate(0, 30)">
+        <LineChart 
+            width={700} 
+            height={350} 
+            data={recurrenceData} 
+            margin={{ top: 0, right: 20, left: 0, bottom: 0 }}
+        >
+            <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+            <XAxis 
+                dataKey="name"
+                ticks={
+                    Array.from({ length: Math.floor(recurrenceData.length / 365) + 1 }, (_, i) => i * 365)
+                }
+                tickFormatter={(value) => `${value / 365}`}
+            >
+                <Label value="Roky" offset={-10} position="insideBottom" />
+            </XAxis>
+            <YAxis domain={[0, 1]}>
+            </YAxis>
+            <Line 
+                type="monotone" 
+                dataKey="y" 
+                stroke="red" 
+                dot={false} 
+                name="Pravděpodobnost sekundární lečby po remisi v čase" 
+            />
+        </LineChart>
+    </g>
 </Group>
 
+<h2 style={{ textAlign: 'center', marginTop: '20px' }}>Signifikance prediktorů</h2>
+<Group>
+    <BarChart 
+        width={700} 
+        height={350} 
+        data={shapData}
+        margin={{ bottom: 100 }}
+    >
 
-                            <Group>
-                                <BarChart 
-                                    width={700} 
-                                    height={350} 
-                                    data={shapData}
-                                    margin={{ bottom: 100 }}
-                                >
-                                    <XAxis dataKey="feature" angle={-35} textAnchor="end" position="top" />
-                                    <YAxis />
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <Bar dataKey="value" fill="#8884d8" />
-                                </BarChart>
-                            </Group>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis 
+            dataKey="feature" 
+            angle={-35} 
+            textAnchor="end" 
+        />
+        <YAxis />
+        <Bar dataKey="value" fill="#8884d8" />
+    </BarChart>
+</Group>
+
                         </Stack>
                     </Card>
                 </Stack>
