@@ -97,28 +97,21 @@ function App() {
                                 <Group>
                                     <Stack justify="space-between">
                                         <Group justify="space-between">
-                                            <Input.Label>pl delka</Input.Label>
+                                            <Input.Label>Délka primární léčby</Input.Label>
                                             <NumberInput
                                                 value={pldelka}
                                                 onChange={setPldelka}
                                             />
                                         </Group>
                                         <Group justify="space-between">
-                                            <Input.Label>pl pocet leceb H</Input.Label>
+                                            <Input.Label>Pořadí novotvaru</Input.Label>
                                             <NumberInput
-                                                value={plpocetlecebH}
-                                                onChange={setPlpocetlecebH}
+                                                value={novotvarporadi}
+                                                onChange={setNovotvarporadi}
                                             />
                                         </Group>
                                         <Group justify="space-between">
-                                            <Input.Label>pl pocet leceb</Input.Label>
-                                            <NumberInput
-                                                value={plpocetleceb}
-                                                onChange={setPlpocetleceb}
-                                            />
-                                        </Group>
-                                        <Group justify="space-between">
-                                            <Input.Label>pl ct</Input.Label>
+                                            <Input.Label>Provedení CT vyšetření</Input.Label>
                                             <SegmentedControl
                                                 value={plct}
                                                 data={[
@@ -129,16 +122,7 @@ function App() {
                                             />
                                         </Group>
                                         <Group justify="space-between">
-                                            <Input.Label>pl pocet leceb C</Input.Label>
-                                            <NumberInput
-                                                value={plpocetlecebC}
-                                                onChange={setPlpocetlecebC}
-                                            />
-                                        </Group>
-                                    </Stack>
-                                    <Stack justify="space-between">
-                                        <Group justify="space-between">
-                                            <Input.Label>tnm klasifikace kod nula</Input.Label>
+                                            <Input.Label>TNM klasifikace novotvaru - N</Input.Label>
                                             <SegmentedControl
                                                 value={tnmklasifikacenkodnula}
                                                 data={[
@@ -148,16 +132,8 @@ function App() {
                                                 onChange={setTnmklasifikacenkodnula}
                                             />
                                         </Group>
-
                                         <Group justify="space-between">
-                                            <Input.Label>pl pocet leceb R</Input.Label>
-                                            <NumberInput
-                                                value={plpocetlecebR}
-                                                onChange={setPlpocetlecebR}
-                                            />
-                                        </Group>
-                                        <Group justify="space-between">
-                                            <Input.Label>pl sono</Input.Label>
+                                            <Input.Label>Provedení sonografického vyšetření</Input.Label>
                                             <SegmentedControl
                                                 value={plsono}
                                                 data={[
@@ -167,18 +143,41 @@ function App() {
                                                 onChange={setPlsono}
                                             />
                                         </Group>
+                                    </Stack>
+                                    <Stack justify="space-between">
                                         <Group justify="space-between">
-                                            <Input.Label>pl pocet leceb T</Input.Label>
+                                            <Input.Label>Celkový počet léčeb</Input.Label>
                                             <NumberInput
-                                                value={plpocetlecebT}
-                                                onChange={setPlpocetlecebT}
+                                                value={plpocetleceb}
+                                                onChange={setPlpocetleceb}
                                             />
                                         </Group>
                                         <Group justify="space-between">
-                                            <Input.Label>novotvar poradi</Input.Label>
+                                            <Input.Label>Počet podstoupených hormonoterapií</Input.Label>
                                             <NumberInput
-                                                value={novotvarporadi}
-                                                onChange={setNovotvarporadi}
+                                                value={plpocetlecebH}
+                                                onChange={setPlpocetlecebH}
+                                            />
+                                        </Group>
+                                        <Group justify="space-between">
+                                            <Input.Label>Počet podstoupených chemoterapií</Input.Label>
+                                            <NumberInput
+                                                value={plpocetlecebC}
+                                                onChange={setPlpocetlecebC}
+                                            />
+                                        </Group>
+                                        <Group justify="space-between">
+                                            <Input.Label>Počet podstoupených radioterapií</Input.Label>
+                                            <NumberInput
+                                                value={plpocetlecebR}
+                                                onChange={setPlpocetlecebR}
+                                            />
+                                        </Group>
+                                        <Group justify="space-between">
+                                            <Input.Label>Počet podstoupených centrových protinádorových léčeb</Input.Label>
+                                            <NumberInput
+                                                value={plpocetlecebT}
+                                                onChange={setPlpocetlecebT}
                                             />
                                         </Group>
                                     </Stack>
@@ -189,14 +188,22 @@ function App() {
                             </Stack>
                         </Box>
                         <Stack>
-                            <Group>
-                                <LineChart width={700} height={350} data={recurrenceData}>
-                                    <XAxis dataKey="name" />
-                                    <YAxis domain={[0, 1]} />
-                                    <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                                    <Line type="monotone" dataKey="y" stroke="red" dot={false} />
-                                </LineChart>
-                            </Group>
+                        <Group>
+    <LineChart width={700} height={350} data={recurrenceData}>
+        <XAxis 
+            dataKey="name"
+            ticks={
+                Array.from({ length: Math.floor(recurrenceData.length / 365) + 1 }, (_, i) => i * 365)
+            }
+            tickFormatter={(value) => `${value / 365}`}
+        />
+        <YAxis domain={[0, 1]} />
+        <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+        <Line type="monotone" dataKey="y" stroke="red" dot={false} />
+    </LineChart>
+</Group>
+
+
                             <Group>
                                 <BarChart 
                                     width={700} 

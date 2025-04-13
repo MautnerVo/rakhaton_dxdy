@@ -58,7 +58,7 @@ def predict():
             else:
                 total_shap += shap_values.values[0]
                 
-        total_shap = -total_shap
+        total_shap = -total_shap / (20 * 365)
 
         feature_importance = list(zip(feature_names, total_shap))
         feature_importance.sort(key=lambda x: x[1], reverse=True)
