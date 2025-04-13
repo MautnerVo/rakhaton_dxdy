@@ -4,10 +4,15 @@ import json
 import numpy as np
 from flask import Flask, request
 from flask_cors import CORS
+import pandas as pd
 import joblib
 
 app = Flask(__name__)
 CORS(app)
+
+shap_test = pd.read_csv('shap_pred.csv')
+for col in shap_test.columns:
+    shap_test[col] = shap_test[col].astype("float64")
 
 with open('rsf.pkl', 'rb') as model_file:
     model = joblib.load(model_file)
@@ -42,16 +47,33 @@ def predict():
         np_data = np.array(list(data.values())).reshape(1, -1)
 
         pred = model.predict_survival_function(np_data, return_array=True)
-        explanation = shap.Explainer(model.predict, np_data)
-        print(explanation)
-        shap_values = explanation(np_data)
-        print(shap_values)
-        feature_names = shap_values.feature_names
-        shap_values = shap_values.values[0]
-        feature_importance = list(zip(feature_names, shap_values))
+        explainer = shap.Explainer(model.predict, np_data)        
+        
+        for i in range(len(shap_test)):
+            shap_values = explainer(shap_test.iloc[[i]].astype("float64"))
 
-        print(feature_importance)
-        return json.dumps(pred.tolist())
+            if i == 0:
+                feature_names = shap_values.feature_names
+                total_shap = shap_values.values[0].copy()
+            else:
+                total_shap += shap_values.values[0]
+                
+        total_shap = -total_shap
+
+        feature_importance = list(zip(feature_names, total_shap))
+        feature_importance.sort(key=lambda x: x[1], reverse=True)
+
+        importance_json = [
+            {"feature": name, "importance": float(importance)}
+              for name, importance in feature_importance
+        ]
+
+        response = {
+            "prediction": pred.tolist(),
+            "shap_values": importance_json,
+        }
+
+        return json.dumps(response, indent=4, ensure_ascii=False)
     else:
         return 'Bro you should send me json data wtf'
 

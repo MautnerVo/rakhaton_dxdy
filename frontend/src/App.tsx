@@ -1,11 +1,9 @@
-import { NumberInput, SegmentedControl, Alert, LoadingOverlay, Loader, Box, Group, Button, Stack, Title, Card, Input } from '@mantine/core'
+import { NumberInput, SegmentedControl, Alert, LoadingOverlay, Loader, Box, Group, Button, Stack, Title, Card, Input } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
-import { useState, useEffect } from 'react'
-import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
-
+import { useState, useEffect } from 'react';
+import { BarChart, Bar, CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 
 function App() {
-
     const [pldelka, setPldelka] = useState<string | number>('');
     const [plpocetlecebH, setPlpocetlecebH] = useState<string | number>('');
     const [plpocetleceb, setPlpocetleceb] = useState<string | number>('');
@@ -21,11 +19,13 @@ function App() {
     const [error, setError] = useState<string>('');
 
     const [recurrenceData, setRecurrenceData] = useState([]);
+    const [shapData, setShapData] = useState([]);
 
     useEffect(() => {
         console.log("Recurrence data updated:", recurrenceData);
-    }, [recurrenceData])
-    
+        console.log("SHAP data updated:", shapData);
+    }, [recurrenceData, shapData]);
+
     const handleSubmit = async () => {
         const data = {
             pldelka: pldelka,
@@ -41,8 +41,6 @@ function App() {
         }
 
         const url = "http://localhost:5000/predict";
-
-
 
         try {
             setLoading(true);
@@ -63,7 +61,16 @@ function App() {
             const json = await response.json();
             setLoading(false);
             setError('');
-            setRecurrenceData(json[0].map((item: number, i: number) => ({ name: i + 1, y: 1 - item })));
+
+            // Process recurrence data
+            setRecurrenceData(json["prediction"][0].map((item: number, i: number) => ({ name: i + 1, y: 1 - item })));
+
+            // Process SHAP data
+            const shapProcessedData = json["shap_values"].map((item: { feature: string, importance: number }) => ({
+                feature: item.feature,
+                value: item.importance,
+            }));
+            setShapData(shapProcessedData);
         } catch (error: any) {
             setLoading(false);
             setError(error.message);
@@ -74,18 +81,18 @@ function App() {
     return (
         <>
             <header>
-                <Group justify="center" style={{padding: "2em"}}>
+                <Group justify="center" style={{ padding: "2em" }}>
                     <Title>BCRP</Title>
                 </Group>
             </header>
             <main>
                 <Stack>
                     <Card shadow="sm" padding="lg" radius="md" withBorder>
-                        <LoadingOverlay visible={loading} loaderProps={{children: <Loader />}} />
+                        <LoadingOverlay visible={loading} loaderProps={{ children: <Loader /> }} />
                         <Box pos="relative">
                             <Stack gap="2em">
                                 {error && <Alert variant="light" color="red" title="Error" icon={<IconInfoCircle />}>
-                                    { error }
+                                    {error}
                                 </Alert>}
                                 <Group>
                                     <Stack justify="space-between">
@@ -115,8 +122,8 @@ function App() {
                                             <SegmentedControl
                                                 value={plct}
                                                 data={[
-                                                    {value: '0', label: 'ne'},
-                                                    {value: '1', label: 'ano'},
+                                                    { value: '0', label: 'ne' },
+                                                    { value: '1', label: 'ano' },
                                                 ]}
                                                 onChange={setPlct}
                                             />
@@ -135,8 +142,8 @@ function App() {
                                             <SegmentedControl
                                                 value={tnmklasifikacenkodnula}
                                                 data={[
-                                                    {value: '0', label: 'ne'},
-                                                    {value: '1', label: 'ano'},
+                                                    { value: '0', label: 'ne' },
+                                                    { value: '1', label: 'ano' },
                                                 ]}
                                                 onChange={setTnmklasifikacenkodnula}
                                             />
@@ -154,8 +161,8 @@ function App() {
                                             <SegmentedControl
                                                 value={plsono}
                                                 data={[
-                                                    {value: '0', label: 'ne'},
-                                                    {value: '1', label: 'ano'},
+                                                    { value: '0', label: 'ne' },
+                                                    { value: '1', label: 'ano' },
                                                 ]}
                                                 onChange={setPlsono}
                                             />
@@ -183,19 +190,32 @@ function App() {
                         </Box>
                         <Stack>
                             <Group>
-                                <LineChart width={500} height={300} data={recurrenceData}>
-                                    <XAxis dataKey="name"/>
-                                    <YAxis domain={[0, 1]}/>
-                                    <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
-                                    <Line type="monotone" dataKey="y" stroke="red" dot={false}/>
+                                <LineChart width={700} height={350} data={recurrenceData}>
+                                    <XAxis dataKey="name" />
+                                    <YAxis domain={[0, 1]} />
+                                    <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                                    <Line type="monotone" dataKey="y" stroke="red" dot={false} />
                                 </LineChart>
+                            </Group>
+                            <Group>
+                                <BarChart 
+                                    width={700} 
+                                    height={350} 
+                                    data={shapData}
+                                    margin={{ bottom: 100 }}
+                                >
+                                    <XAxis dataKey="feature" angle={-35} textAnchor="end" position="top" />
+                                    <YAxis />
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <Bar dataKey="value" fill="#8884d8" />
+                                </BarChart>
                             </Group>
                         </Stack>
                     </Card>
                 </Stack>
             </main>
         </>
-    )
+    );
 }
 
-export default App
+export default App;
